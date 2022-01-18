@@ -1,4 +1,4 @@
-
+const Accounts = require('./accounts-model')
 const db = require('../../data/db-config')
 exports.checkAccountPayload = (req, res, next) => {
   // DO YOUR MAGIC
@@ -19,6 +19,7 @@ exports.checkAccountPayload = (req, res, next) => {
   } catch(err) {
   res.status(500).json(err)
 }
+}
 
 exports.checkAccountNameUnique = async (req, res, next) => {
   try {
@@ -27,22 +28,26 @@ exports.checkAccountNameUnique = async (req, res, next) => {
       .first()
     if(exits) {
       res.status(400).json({ message: "that name is taken" })
+    } else {
+      next()
     }
   } catch(err) {
     next(err)
   }
 }
 
-exports.checkAccountId = (req, res, next) => {
-  const { id } = req.params
+exports.checkAccountId = async (req, res, next) => {
   try{
-    if(!id) {
-      res.status(404).json({ message: "account not found" })
+    const account = await Accounts.getById(req.params.id)
+    console.log('account', account)
+    if(!account) {
+      next({ status: 404, message: "account not found"})
     } else {
+      req.account = account
       next()
     }
   } catch(err){
-    res.status(500).json(err)
+    next(err)
   }
 }
-}
+

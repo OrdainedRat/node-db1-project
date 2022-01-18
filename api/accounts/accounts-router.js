@@ -13,17 +13,12 @@ router.get('/', async (req, res, next) => {
     })
 })
 
-router.get('/:id', md.checkAccountId, async (req, res, next) => {
-  Accounts.getById(req.params.id)
-    .then(account => {
-      res.status(200).json(account)
-    })
-    .catch(err => {
-      next(err)
-    })
+router.get('/:id', md.checkAccountId,  async (req, res, next) => {
+  console.log('working here ig', req.account)
+  res.status(200).json(req.account)
 })
 
-router.post('/', md.checkAccountPayload, md.checkAccountNameUnique, async (req, res, next) => {
+router.post('/', md.checkAccountPayload, md.checkAccountNameUnique,  async (req, res, next) => {
   Accounts.create(req.body)
     .then(account => {
       res.status(201).json(account)
@@ -44,7 +39,7 @@ router.put('/:id', md.checkAccountId, md.checkAccountPayload, md.checkAccountNam
     })
 });
 
-router.delete('/:id',md.checkAccountId, async (req, res, next) => {
+router.delete('/:id', md.checkAccountId, async (req, res, next) => {
   Accounts.deleteById(req.params.id)
     .then(deleted => {
       res.status(200).json(deleted)
