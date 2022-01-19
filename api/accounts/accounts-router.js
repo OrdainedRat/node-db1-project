@@ -28,9 +28,9 @@ router.post('/', md.checkAccountPayload, md.checkAccountNameUnique,  async (req,
     })
 })
 
-router.put('/:id', md.checkAccountId, md.checkAccountPayload, md.checkAccountNameUnique, async (req, res, next) => {
+router.put('/:id', md.checkAccountId, md.checkAccountPayload,  async (req, res, next) => {
   // DO YOUR MAGIC
-  Accounts.updateById(req.params.id)
+  Accounts.updateById(req.params.id, req.body)
     .then(updated => {
       res.status(200).json(updated)
     })
@@ -49,7 +49,7 @@ router.delete('/:id', md.checkAccountId, async (req, res, next) => {
     })
 })
 
-router.use((err, req, res, next) => { 
+router.use((err, req, res, next) => { // eslint-disable-line
   res.status(err.status || 500).json({
     message: err.message,
     stack: err.stack,

@@ -4,20 +4,21 @@ exports.checkAccountPayload = (req, res, next) => {
   // DO YOUR MAGIC
   try{
     const { name, budget } = req.body
-    const length = name.trim().length()
+    console.log('budget here', budget)
     if(name === undefined || budget === undefined) {
       res.status(400).json({ message: "name and budget are required" })
     } else if(typeof budget !== 'number') {
       res.status(400).json({ message: "budget of account must be a number" })
-    } else if ( length < 3 || length > 100) {
+    } else if ( name.trim().length < 3 || name.trim().length > 100) {
       res.status(400).json({ message: "name of account must be between 3 and 100" })
     } else if(budget < 0 || budget > 1000000) {
       res.status(400).json({ message: "budget of account is too large or too small" })
     } else {
+      req.body.name = name.trim()
       next()
     }
   } catch(err) {
-  res.status(500).json(err)
+    next(err)
 }
 }
 
@@ -27,7 +28,7 @@ exports.checkAccountNameUnique = async (req, res, next) => {
       .where('name', req.body.name.trim())
       .first()
     if(exits) {
-      res.status(400).json({ message: "that name is taken" })
+      next({status: 400, message: 'that name is taken'})
     } else {
       next()
     }
